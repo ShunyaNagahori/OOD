@@ -21,7 +21,7 @@ class Dictionary {
       join(await getDatabasesPath(), 'dictionary_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE dictionary(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, category STRING)",
+          "CREATE TABLE dictionaries(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, category STRING)",
         );
       },
       version: 1,
@@ -33,7 +33,7 @@ class Dictionary {
   static Future<void> saveDictionary(Dictionary dictionary) async {
     final Database db = await initializeDatabase();
     await db.insert(
-      'dictionary',
+      'dictionaries',
       dictionary.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -41,7 +41,7 @@ class Dictionary {
 
   static Future<List<Dictionary>> getAllDictionaries() async {
     final Database db = await initializeDatabase();
-    final List<Map<String, dynamic>> maps = await db.query('dictionary');
+    final List<Map<String, dynamic>> maps = await db.query('dictionaries');
     return List.generate(maps.length, (index) {
       return Dictionary(
         id: maps[index]['id'],
@@ -51,10 +51,10 @@ class Dictionary {
     });
   }
 
-  static Future<Dictionary?> getFindById(int id) async {
+  static Future<Dictionary?> findById(int id) async {
     final Database db = await initializeDatabase();
     final List<Map<String, dynamic>> map = await db.query(
-      'dictionary',
+      'dictionaries',
       where: "id = ?",
       whereArgs: [id],
     );
@@ -73,7 +73,7 @@ class Dictionary {
   static Future<void> updateDictionary(Dictionary dictionary) async {
     final Database db = await initializeDatabase();
     await db.update(
-      'dictionary',
+      'dictionaries',
       dictionary.toMap(),
       where: 'id = ?',
       whereArgs: [dictionary.id],
@@ -84,7 +84,7 @@ class Dictionary {
   static Future<void> deleteDictionary(int id) async {
     final Database db = await initializeDatabase();
     await db.delete(
-      'dictionary',
+      'dictionaries',
       where: 'id = ?',
       whereArgs: [id],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ood/models/dictionary.dart';
+import 'package:ood/views/item_list.dart';
 
 class DictionaryListWidget extends StatefulWidget {
   const DictionaryListWidget({super.key});
@@ -45,7 +46,7 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    const Text('辞書のタイトル'),
+                    const Text('タイトル'),
                     TextField(controller: _titleController),
                     const SizedBox(height: 8),
                     const Text('カテゴリー'),
@@ -79,7 +80,14 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                 itemCount: dictionaryList.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ItemListWidget(dictionary: dictionaryList[index]),
+                        ),
+                      );
+                    },
                     child: Card(
                       child: ListTile(
                         title: Text(dictionaryList[index].title),
