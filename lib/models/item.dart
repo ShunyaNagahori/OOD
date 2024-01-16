@@ -5,12 +5,14 @@ class Item {
   Item({
     this.id,
     required this.title,
+    this.subTitle,
     required this.text,
     required this.dictionaryId,
   });
 
   final int? id;
   final String title;
+  final String? subTitle;
   final String text;
   final int dictionaryId;
 
@@ -18,6 +20,7 @@ class Item {
     return {
       'id': id,
       'title': title,
+      'subTitle': subTitle,
       'text': text,
       'dictionaryId': dictionaryId,
     };
@@ -28,7 +31,7 @@ class Item {
       join(await getDatabasesPath(), 'item_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, text TEXT, dictionaryId INTEGER NOT NULL, FOREIGN KEY (dictionaryId) REFERENCES dictionaries (id))",
+          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING NOT NULL, subTitle STRING, text TEXT NOT NULL, dictionaryId INTEGER NOT NULL, FOREIGN KEY (dictionaryId) REFERENCES dictionaries (id))",
         );
       },
       version: 1,
@@ -48,12 +51,17 @@ class Item {
 
   static Future<List<Item>> getAllItems(int dictionaryId) async {
     final Database db = await initializeDatabase();
-    final List<Map<String, dynamic>> maps = await db
-        .query('items', where: 'dictionaryId = ?', whereArgs: [dictionaryId]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      'items',
+      where: 'dictionaryId = ?',
+      whereArgs: [dictionaryId],
+      orderBy: 'title COLLATE NOCASE',
+    );
     return List.generate(maps.length, (index) {
       return Item(
         id: maps[index]['id'],
         title: maps[index]['title'],
+        subTitle: maps[index]['subTitle'],
         text: maps[index]['text'],
         dictionaryId: maps[index]['dictionaryId'],
       );
@@ -62,8 +70,8 @@ class Item {
 
   static Future<Item?> findByTitle(int id) async {
     final Database db = await initializeDatabase();
-    final List<Map<String, dynamic>> maps =
-        await db.query('items', where: 'title = ?', whereArgs: [id]);
+    final List<Map<String, dynamic>> maps = await db
+        .query('items', where: 'title = ? OR subtitle = ?', whereArgs: [id]);
 
     if (maps.isEmpty) {
       return null;

@@ -2,11 +2,11 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Dictionary {
-  Dictionary({this.id, required this.title, required this.category});
+  Dictionary({this.id, required this.title, this.category});
 
   final int? id;
   final String title;
-  final String category;
+  final String? category;
 
   Map<String, dynamic> toMap() {
     return {
@@ -21,7 +21,7 @@ class Dictionary {
       join(await getDatabasesPath(), 'dictionary_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE dictionaries(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, category STRING)",
+          "CREATE TABLE dictionaries(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING NOT NULL, category STRING)",
         );
       },
       version: 1,

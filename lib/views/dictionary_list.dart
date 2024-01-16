@@ -46,7 +46,7 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    const Text('タイトル'),
+                    const Text('辞書のタイトル'),
                     TextField(controller: _titleController),
                     const SizedBox(height: 8),
                     const Text('カテゴリー'),
@@ -54,8 +54,17 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                     const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: () {
-                        _saveDictionary();
-                        Navigator.pop(context);
+                        if (_titleController.text.isNotEmpty &&
+                            _categoryController.text.isNotEmpty) {
+                          _saveDictionary();
+                          Navigator.pop(context);
+                        } else {
+                          const snackBar = SnackBar(
+                            content: Text('タイトルまたはカテゴリーが入力されていません'),
+                            duration: Duration(seconds: 2),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
                       },
                       child: const Text('作成'),
                     ),
@@ -91,7 +100,7 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                     child: Card(
                       child: ListTile(
                         title: Text(dictionaryList[index].title),
-                        subtitle: Text(dictionaryList[index].category),
+                        subtitle: Text(dictionaryList[index].category ?? ''),
                       ),
                     ),
                   );

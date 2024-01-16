@@ -12,11 +12,13 @@ class ItemFormWidget extends StatefulWidget {
 class _ItemFormWidgetState extends State<ItemFormWidget> {
   List<Item> itemList = [];
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _subTitleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
 
   @override
   void dispose() {
     _titleController.dispose();
+    _subTitleController.dispose();
     _textController.dispose();
     super.dispose();
   }
@@ -42,6 +44,13 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
               ),
             ),
             const SizedBox(height: 8),
+            TextField(
+              controller: _subTitleController,
+              decoration: const InputDecoration(
+                hintText: '補足情報を入力してください',
+              ),
+            ),
+            const SizedBox(height: 8),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(8),
@@ -64,8 +73,16 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
             const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () {
-                _saveItem(widget.dictionaryId);
-                Navigator.of(context).pop(itemList);
+                if (_titleController.text.isNotEmpty) {
+                  _saveItem(widget.dictionaryId);
+                  Navigator.of(context).pop(itemList);
+                } else {
+                  const snackBar = SnackBar(
+                    content: Text('タイトルまたは本文が入力されていません'),
+                    duration: Duration(seconds: 2),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.zero,
@@ -86,6 +103,7 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
   void _saveItem(int dictionaryId) async {
     Item item = Item(
       title: _titleController.text,
+      subTitle: _subTitleController.text,
       text: _textController.text,
       dictionaryId: dictionaryId,
     );
