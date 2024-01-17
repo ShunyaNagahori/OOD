@@ -72,37 +72,31 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                         children: [
                           Container(
                             padding: const EdgeInsets.only(top: 10),
-                            child: Expanded(
-                              child: Tategaki(
-                                itemList[index].text,
-                                fontSize: 16,
-                                space: 5,
-                              ),
+                            child: Tategaki(
+                              itemList[index].text,
+                              fontSize: 16,
+                              space: 5,
                             ),
                           ),
                           Column(
                             children: [
-                              Expanded(
-                                child: Tategaki(
-                                  itemList[index].subTitle == null ||
-                                          itemList[index].subTitle!.isEmpty
-                                      ? ''
-                                      : '【${itemList[index].subTitle}】',
-                                  fontSize: 16,
-                                  space: 5,
-                                ),
+                              Tategaki(
+                                itemList[index].subTitle == null ||
+                                        itemList[index].subTitle!.isEmpty
+                                    ? ''
+                                    : '【${itemList[index].subTitle}】',
+                                fontSize: 16,
+                                space: 5,
                               ),
                             ],
                           ),
                           Container(
                             padding: const EdgeInsets.only(top: 10),
-                            child: Expanded(
-                              child: Tategaki(
-                                itemList[index].title,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                space: 5,
-                              ),
+                            child: Tategaki(
+                              itemList[index].title,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              space: 5,
                             ),
                           ),
                         ],
