@@ -50,7 +50,7 @@ class Tategaki extends StatelessWidget {
 
   Widget _character(String char) {
     if (VerticalRotated.map[char] != null) {
-      return Container(
+      return Padding(
         padding: const EdgeInsets.only(right: 3.5),
         child: Text(
           VerticalRotated.map[char]!,
@@ -58,7 +58,7 @@ class Tategaki extends StatelessWidget {
         ),
       );
     } else if (RegExp(r'[a-zA-Z]').hasMatch(char)) {
-      return Container(
+      return Padding(
         padding: const EdgeInsets.only(top: 4.5, bottom: 4.5),
         child: RotatedBox(
           quarterTurns: 1,
@@ -72,7 +72,7 @@ class Tategaki extends StatelessWidget {
         ),
       );
     } else {
-      return Container(
+      return Padding(
         padding: const EdgeInsets.only(right: 3.5),
         child: Text(
           char,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ood/models/dictionary.dart';
 import 'package:ood/models/item.dart';
+import 'package:ood/sizes.dart';
 import 'package:ood/views/item_form.dart';
+import 'package:ood/views/item_show.dart';
 import 'package:ood/widgets/tategaki.dart';
 
 class ItemListWidget extends StatefulWidget {
@@ -61,45 +63,51 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                 itemCount: itemList.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 12,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Tategaki(
-                              itemList[index].text,
-                              fontSize: 16,
-                              space: 5,
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Tategaki(
-                                itemList[index].subTitle == null ||
-                                        itemList[index].subTitle!.isEmpty
-                                    ? ''
-                                    : '【${itemList[index].subTitle}】',
-                                fontSize: 16,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ItemShowWidget(item: itemList[index]),
+                        ),
+                      );
+                    },
+                    child: SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 0,
+                          horizontal: 12,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Tategaki(
+                                itemList[index].text,
+                                fontSize: Sizes.m,
                                 space: 5,
                               ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Tategaki(
-                              itemList[index].title,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              space: 5,
                             ),
-                          ),
-                        ],
+                            Column(
+                              children: [
+                                Tategaki(
+                                  itemList[index].title,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: Sizes.l,
+                                  space: 5,
+                                ),
+                                Tategaki(
+                                  itemList[index].subTitle == null ||
+                                          itemList[index].subTitle!.isEmpty
+                                      ? ''
+                                      : '【${itemList[index].subTitle}】',
+                                  fontSize: Sizes.m,
+                                  space: 5,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
