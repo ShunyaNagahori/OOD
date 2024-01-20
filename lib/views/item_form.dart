@@ -115,7 +115,43 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                   child: Text(isEditMode ? '更新' : '登録'),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: isEditMode ? 8 : 16),
+              if (isEditMode)
+                Column(children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: const Text('本当に削除しますか？'),
+                            actions: [
+                              TextButton(
+                                child: const Text('キャンセル'),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                              TextButton(
+                                child: const Text('削除'),
+                                onPressed: () {
+                                  _deleteItem(widget.item!.id!);
+                                  int count = 0;
+                                  Navigator.popUntil(
+                                      context, (_) => count++ >= 3);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: const Text('削除'),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ]),
             ],
           ),
         ),
@@ -159,5 +195,9 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
     _textController.clear();
 
     return updateItem;
+  }
+
+  void _deleteItem(int id) async {
+    await Item.deleteItem(id);
   }
 }
