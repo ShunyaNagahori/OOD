@@ -21,6 +21,11 @@ class _ItemListWidgetState extends State<ItemListWidget> {
     itemList = await Item.getAllItems(widget.dictionary.id!.toInt());
   }
 
+  Future<void> _refreshItemList() async {
+    itemList = await Item.getAllItems(widget.dictionary.id!.toInt());
+    setState(() {}); // データの変更を通知して再構築をトリガー
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,9 +43,11 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                 ),
               )
                   .then((value) {
-                setState(() {
-                  itemList = value;
-                });
+                if (value != null) {
+                  setState(() {
+                    itemList = value;
+                  });
+                }
               });
             },
             icon: const Icon(Icons.add),
@@ -64,12 +71,16 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
+                      Navigator.of(context)
+                          .push(
                         MaterialPageRoute(
                           builder: (context) =>
                               ItemShowWidget(item: itemList[index]),
                         ),
-                      );
+                      )
+                          .then((value) {
+                        _refreshItemList(); // FIXME: 更新したときのみリフレッシュしたい
+                      });
                     },
                     child: SingleChildScrollView(
                       child: Container(

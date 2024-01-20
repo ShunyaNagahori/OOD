@@ -68,15 +68,32 @@ class Item {
     });
   }
 
-  static Future<Item?> findByTitle(int id) async {
+  static Future<Item?> findById(int id) async {
+    final Database db = await initializeDatabase();
+    final List<Map<String, dynamic>> map =
+        await db.query('items', where: 'id = ?', whereArgs: [id]);
+
+    if (map.isEmpty) {
+      return null;
+    } else {
+      return Item(
+        id: map[0]['id'],
+        title: map[0]['title'],
+        subTitle: map[0]['subTitle'],
+        text: map[0]['text'],
+        dictionaryId: map[0]['dictionaryId'],
+      );
+    }
+  }
+
+  static Future<Item?> findByTitle(String title) async {
     final Database db = await initializeDatabase();
     final List<Map<String, dynamic>> maps = await db
-        .query('items', where: 'title = ? OR subtitle = ?', whereArgs: [id]);
+        .query('items', where: 'title = ? OR subtitle = ?', whereArgs: [title]);
 
     if (maps.isEmpty) {
       return null;
     } else {}
-    return null;
   }
 
   static Future<void> updateItem(Item item) async {
