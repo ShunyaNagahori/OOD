@@ -187,7 +187,7 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
     await Item.updateItem(updateItem);
 
     setState(() {
-      widget.item = updateItem;
+      widget.item = updateItem; // FIXME: 直接widget.itemを変更しているので、修正したい
     });
 
     _titleController.clear();

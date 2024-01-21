@@ -115,4 +115,13 @@ class Item {
       whereArgs: [id],
     );
   }
+
+  static Future<void> deleteAllItems(int dictionaryId) async {
+    final Database db = await initializeDatabase();
+    await db.delete(
+      'items',
+      where: 'dictionaryId = ?',
+      whereArgs: [dictionaryId],
+    );
+  }
 }

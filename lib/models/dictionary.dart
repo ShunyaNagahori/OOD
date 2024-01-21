@@ -1,3 +1,4 @@
+import 'package:ood/models/item.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -82,6 +83,7 @@ class Dictionary {
   }
 
   static Future<void> deleteDictionary(int id) async {
+    Item.deleteAllItems(id);
     final Database db = await initializeDatabase();
     await db.delete(
       'dictionaries',

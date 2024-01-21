@@ -23,7 +23,7 @@ class _ItemListWidgetState extends State<ItemListWidget> {
 
   Future<void> _refreshItemList() async {
     itemList = await Item.getAllItems(widget.dictionary.id!.toInt());
-    setState(() {}); // データの変更を通知して再構築をトリガー
+    setState(() {});
   }
 
   @override
