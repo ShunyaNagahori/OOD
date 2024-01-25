@@ -47,111 +47,122 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
         backgroundColor: Colors.white,
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  hintText: '名前やタイトルを入力してください',
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _subTitleController,
-                decoration: const InputDecoration(
-                  hintText: '補足情報を入力してください',
-                ),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1),
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: TextField(
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '詳細を入力してください',
+          child: CustomScrollView(
+            physics: BouncingScrollPhysics(),
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        hintText: '名前やタイトルを入力してください',
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  if (_titleController.text.isNotEmpty &&
-                      _textController.text.isNotEmpty) {
-                    if (isEditMode) {
-                      _updateItem().then((Item updateItem) {
-                        Navigator.of(context).pop(updateItem);
-                      });
-                    } else {
-                      _saveItem();
-                      Navigator.of(context).pop(itemList);
-                    }
-                  } else {
-                    const snackBar = SnackBar(
-                      content: Text('タイトルまたは本文が入力されていません'),
-                      duration: Duration(seconds: 2),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                ),
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  child: Text(isEditMode ? '更新' : '登録'),
-                ),
-              ),
-              SizedBox(height: isEditMode ? 8 : 16),
-              if (isEditMode)
-                Column(children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            content: const Text('本当に削除しますか？'),
-                            actions: [
-                              TextButton(
-                                child: const Text('キャンセル'),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              TextButton(
-                                child: const Text('削除'),
-                                onPressed: () {
-                                  _deleteItem(widget.item!.id!);
-                                  int count = 0;
-                                  Navigator.popUntil(
-                                      context, (_) => count++ >= 3);
-                                },
-                              ),
-                            ],
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _subTitleController,
+                      decoration: const InputDecoration(
+                        hintText: '補足情報を入力してください',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(8)),
+                        ),
+                        child: TextField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          controller: _textController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '詳細を入力してください',
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_titleController.text.isNotEmpty &&
+                            _textController.text.isNotEmpty) {
+                          if (isEditMode) {
+                            _updateItem().then((Item updateItem) {
+                              Navigator.of(context).pop(updateItem);
+                            });
+                          } else {
+                            _saveItem();
+                            Navigator.of(context).pop(itemList);
+                          }
+                        } else {
+                          const snackBar = SnackBar(
+                            content: Text('タイトルまたは本文が入力されていません'),
+                            duration: Duration(seconds: 2),
                           );
-                        },
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      child: const Text('削除'),
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        child: Text(isEditMode ? '更新' : '登録'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                ]),
+                    SizedBox(height: isEditMode ? 8 : 16),
+                    if (isEditMode)
+                      Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: const Text('本当に削除しますか？'),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('キャンセル'),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                      TextButton(
+                                        child: const Text('削除'),
+                                        onPressed: () {
+                                          _deleteItem(widget.item!.id!);
+                                          int count = 0;
+                                          Navigator.popUntil(
+                                              context, (_) => count++ >= 3);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              alignment: Alignment.center,
+                              child: const Text('削除'),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
