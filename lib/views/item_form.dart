@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ood/models/item.dart';
+import 'package:ood/my_colors.dart';
 
 class ItemFormWidget extends StatefulWidget {
   ItemFormWidget({super.key, required this.dictionaryId, this.item});
@@ -42,9 +43,14 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
       onPopInvoked: (bool didPop) {},
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isEditMode ? '項目の編集' : '新しい項目の追加'),
+          title: Text(isEditMode ? '項目の編集' : '新しい項目の追加',
+              style: const TextStyle(
+                  color: MyColors.white, fontWeight: FontWeight.bold)),
+          backgroundColor: MyColors.brown,
+          iconTheme: const IconThemeData(
+            color: MyColors.white,
+          ),
         ),
-        backgroundColor: Colors.white,
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           child: CustomScrollView(
@@ -60,6 +66,16 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                       controller: _titleController,
                       decoration: const InputDecoration(
                         hintText: '名前やタイトルを入力してください',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -67,6 +83,16 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                       controller: _subTitleController,
                       decoration: const InputDecoration(
                         hintText: '補足情報を入力してください',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -132,12 +158,12 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                                   return AlertDialog(
                                     content: const Text('本当に削除しますか？'),
                                     actions: [
-                                      TextButton(
+                                      ElevatedButton(
                                         child: const Text('キャンセル'),
                                         onPressed: () =>
                                             Navigator.of(context).pop(),
                                       ),
-                                      TextButton(
+                                      ElevatedButton(
                                         child: const Text('削除'),
                                         onPressed: () {
                                           _deleteItem(widget.item!.id!);

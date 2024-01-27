@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ood/models/item.dart';
+import 'package:ood/my_colors.dart';
 import 'package:ood/sizes.dart';
 import 'package:ood/views/item_form.dart';
 
@@ -15,7 +16,15 @@ class _ItemShowWidgetState extends State<ItemShowWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item.title),
+        title: Text(
+          widget.item.title,
+          style: const TextStyle(
+              color: MyColors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: MyColors.brown,
+        iconTheme: const IconThemeData(
+          color: MyColors.white,
+        ),
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.star),
@@ -24,7 +33,7 @@ class _ItemShowWidgetState extends State<ItemShowWidget> {
         // ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.edit),
+        shape: const CircleBorder(),
         onPressed: () {
           Navigator.of(context)
               .push(
@@ -41,6 +50,7 @@ class _ItemShowWidgetState extends State<ItemShowWidget> {
             }
           });
         },
+        child: const Icon(Icons.edit),
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),

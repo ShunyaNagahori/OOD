@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ood/models/dictionary.dart';
 import 'package:ood/models/item.dart';
+import 'package:ood/my_colors.dart';
 import 'package:ood/sizes.dart';
 import 'package:ood/views/item_form.dart';
 import 'package:ood/views/item_show.dart';
@@ -48,9 +49,15 @@ class _ItemListWidgetState extends State<ItemListWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(searchWord.isNotEmpty
-            ? "検索： $searchWord"
-            : widget.dictionary.title),
+        title: Text(
+          searchWord.isNotEmpty ? "検索： $searchWord" : widget.dictionary.title,
+          style: const TextStyle(
+              color: MyColors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: MyColors.brown,
+        iconTheme: const IconThemeData(
+          color: MyColors.white,
+        ),
         actions: [
           if (searchWord.isNotEmpty)
             IconButton(
@@ -66,12 +73,11 @@ class _ItemListWidgetState extends State<ItemListWidget> {
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
-        backgroundColor: Colors.pink,
         children: [
           SpeedDialChild(
             child: Icon(Icons.share_rounded),
             label: '共有',
-            backgroundColor: Colors.blue,
+            backgroundColor: MyColors.yellowBrown,
             onTap: () {
               print('Share Tapped');
             },
@@ -79,7 +85,7 @@ class _ItemListWidgetState extends State<ItemListWidget> {
           SpeedDialChild(
             child: const Icon(Icons.add),
             label: '新規作成',
-            backgroundColor: Colors.blue,
+            backgroundColor: MyColors.yellowBrown,
             onTap: () {
               Navigator.of(context)
                   .push(
@@ -103,7 +109,7 @@ class _ItemListWidgetState extends State<ItemListWidget> {
           SpeedDialChild(
             child: const Icon(Icons.search),
             label: '検索',
-            backgroundColor: Colors.blue,
+            backgroundColor: MyColors.yellowBrown,
             onTap: () {
               showDialog(
                   context: context,
@@ -112,10 +118,6 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            '検索',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
                           const SizedBox(height: 8),
                           TextField(controller: _searchController),
                           const SizedBox(height: 8),

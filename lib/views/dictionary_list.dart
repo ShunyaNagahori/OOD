@@ -37,10 +37,13 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('One’s Own Dictionary'),
+        title: const Text('自分辞書',
+            style:
+                TextStyle(color: MyColors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: MyColors.brown,
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+        shape: const CircleBorder(),
         onPressed: () {
           showDialog(
             context: context,
@@ -57,9 +60,11 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                     ),
                     const SizedBox(height: 8),
                     const Text('辞書のタイトル'),
+                    const SizedBox(height: 4),
                     TextField(controller: _titleController),
                     const SizedBox(height: 8),
                     const Text('カテゴリー'),
+                    const SizedBox(height: 4),
                     TextField(controller: _categoryController),
                     const SizedBox(height: 8),
                     ElevatedButton(
@@ -84,9 +89,10 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
             },
           );
         },
+        child: const Icon(Icons.add),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: FutureBuilder(
           future: initializeDictionary(),
           builder: (context, snapshot) {
@@ -114,14 +120,14 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                                       content: const Text('本当に削除しますか？'),
                                       actions: [
                                         Builder(builder: (context) {
-                                          return TextButton(
+                                          return ElevatedButton(
                                             child: const Text("キャンセル"),
                                             onPressed: () =>
                                                 Navigator.pop(context),
                                           );
                                         }),
                                         Builder(builder: (context) {
-                                          return TextButton(
+                                          return ElevatedButton(
                                             child: const Text("削除"),
                                             onPressed: () {
                                               _deleteDictionary(
@@ -216,11 +222,19 @@ class _DictionaryListWidgetState extends State<DictionaryListWidget> {
                             );
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             decoration: BoxDecoration(
                               border:
                                   Border.all(width: 1, color: MyColors.gray),
+                              color: MyColors.white,
+                              // boxShadow: [
+                              //   const BoxShadow(
+                              //     color: Color.fromARGB(255, 236, 236, 236),
+                              //     spreadRadius: 5,
+                              //     blurRadius: 5,
+                              //     offset: Offset(2, 4),
+                              //   ),
+                              // ],
                             ),
                             child: ListTile(
                               title: Text(
