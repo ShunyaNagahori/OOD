@@ -48,7 +48,7 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           child: CustomScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             slivers: [
               SliverFillRemaining(
                 hasScrollBody: false,

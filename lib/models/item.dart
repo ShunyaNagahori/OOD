@@ -86,14 +86,27 @@ class Item {
     }
   }
 
-  static Future<Item?> findByTitle(String title) async {
+  static Future<List<Item>?> findByWord(String word) async {
     final Database db = await initializeDatabase();
-    final List<Map<String, dynamic>> maps = await db
-        .query('items', where: 'title = ? OR subtitle = ?', whereArgs: [title]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      'items',
+      where: 'title LIKE ? OR subtitle LIKE ? OR text LIKE ?',
+      whereArgs: ['%$word%', '%$word%', '%$word%'],
+    );
 
     if (maps.isEmpty) {
       return null;
-    } else {}
+    } else {
+      return List.generate(maps.length, (index) {
+        return Item(
+          id: maps[index]['id'],
+          title: maps[index]['title'],
+          subTitle: maps[index]['subTitle'],
+          text: maps[index]['text'],
+          dictionaryId: maps[index]['dictionaryId'],
+        );
+      });
+    }
   }
 
   static Future<void> updateItem(Item item) async {

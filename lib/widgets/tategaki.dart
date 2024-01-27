@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Tategaki extends StatelessWidget {
-  Tategaki(
-    this.text, {
+  const Tategaki(
+    this.text, {super.key, 
     this.style,
     this.space = 12,
     this.lineSpace,
@@ -160,5 +160,31 @@ class VerticalRotated {
     '7': '７',
     '8': '８',
     '9': '９',
+    'a': 'ａ',
+    'b': 'ｂ',
+    'c': 'ｃ',
+    'd': 'ｄ',
+    'e': 'ｅ',
+    'f': 'ｆ',
+    'g': 'ｇ',
+    'h': 'ｈ',
+    'i': 'ｉ',
+    'j': 'ｊ',
+    'k': 'ｋ',
+    'l': 'ｌ',
+    'm': 'ｍ',
+    'n': 'ｎ',
+    'o': 'ｏ',
+    'p': 'ｐ',
+    'q': 'ｑ',
+    'r': 'ｒ',
+    's': 'ｓ',
+    't': 'ｔ',
+    'u': 'ｕ',
+    'v': 'ｖ',
+    'w': 'ｗ',
+    'x': 'ｘ',
+    'y': 'ｙ',
+    'z': 'ｚ',
   };
 }

@@ -5,6 +5,7 @@ import 'package:ood/sizes.dart';
 import 'package:ood/views/item_form.dart';
 import 'package:ood/views/item_show.dart';
 import 'package:ood/widgets/tategaki.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class ItemListWidget extends StatefulWidget {
   const ItemListWidget({super.key, required this.dictionary});
@@ -16,9 +17,20 @@ class ItemListWidget extends StatefulWidget {
 
 class _ItemListWidgetState extends State<ItemListWidget> {
   List<Item> itemList = [];
+  String searchWord = '';
+  final TextEditingController _searchController = TextEditingController();
 
   Future<void> initializeItem() async {
-    itemList = await Item.getAllItems(widget.dictionary.id!.toInt());
+    if (searchWord.isEmpty) {
+      itemList = await Item.getAllItems(widget.dictionary.id!.toInt());
+    } else {
+      List<Item>? results = await Item.findByWord(searchWord);
+      if (results != null) {
+        itemList = results;
+      } else {
+        itemList = [];
+      }
+    }
   }
 
   Future<void> _refreshItemList() async {
@@ -27,13 +39,48 @@ class _ItemListWidgetState extends State<ItemListWidget> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.dictionary.title),
+        title: Text(searchWord.isNotEmpty
+            ? "検索： $searchWord"
+            : widget.dictionary.title),
         actions: [
-          IconButton(
-            onPressed: () async {
+          if (searchWord.isNotEmpty)
+            IconButton(
+              onPressed: () async {
+                setState(() {
+                  searchWord = '';
+                });
+                _searchController.clear();
+              },
+              icon: const Icon(Icons.clear),
+            ),
+        ],
+      ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        backgroundColor: Colors.pink,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.share_rounded),
+            label: '共有',
+            backgroundColor: Colors.blue,
+            onTap: () {
+              print('Share Tapped');
+            },
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.add),
+            label: '新規作成',
+            backgroundColor: Colors.blue,
+            onTap: () {
               Navigator.of(context)
                   .push(
                 MaterialPageRoute(
@@ -42,16 +89,60 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                   ),
                 ),
               )
-                  .then((value) {
-                if (value != null) {
-                  setState(() {
-                    itemList = value;
-                  });
-                }
-              });
+                  .then(
+                (value) {
+                  if (value != null) {
+                    setState(() {
+                      itemList = value;
+                    });
+                  }
+                },
+              );
             },
-            icon: const Icon(Icons.add),
-          )
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.search),
+            label: '検索',
+            backgroundColor: Colors.blue,
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return AlertDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            '検索',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(controller: _searchController),
+                          const SizedBox(height: 8),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_searchController.text.isNotEmpty) {
+                                setState(() {
+                                  searchWord = _searchController.text;
+                                });
+                                Navigator.pop(context);
+                              } else {
+                                const snackBar = SnackBar(
+                                  content: Text('検索ワードが入力されていません'),
+                                  duration: Duration(seconds: 2),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
+                            },
+                            child: const Text('検索'),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+            },
+          ),
         ],
       ),
       body: Container(

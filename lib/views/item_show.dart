@@ -16,12 +16,12 @@ class _ItemShowWidgetState extends State<ItemShowWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.item.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.star),
-            onPressed: () {},
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.star),
+        //     onPressed: () {},
+        //   ),
+        // ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.edit),
