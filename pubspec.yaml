@@ -11,7 +11,11 @@ dependencies:
     sdk: flutter
   flutter_slidable: ^3.0.1
   flutter_speed_dial: ^7.0.0
+  image_picker: ^1.0.7
+  multi_image_picker: ^4.8.01
   path: ^1.8.3
+  path_provider: ^2.1.2
+  provider: ^6.1.1
   sqflite: ^2.3.0
 
 dev_dependencies:

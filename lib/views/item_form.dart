@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:ood/models/item.dart';
+import 'package:ood/models/item_picture.dart';
+import 'package:ood/models/picture.dart';
 import 'package:ood/my_colors.dart';
+import 'package:ood/views/picture_list.dart';
+import 'package:ood/views/picture_show.dart';
 
 class ItemFormWidget extends StatefulWidget {
   ItemFormWidget({super.key, required this.dictionaryId, this.item});
@@ -13,6 +20,8 @@ class ItemFormWidget extends StatefulWidget {
 
 class _ItemFormWidgetState extends State<ItemFormWidget> {
   List<Item> itemList = [];
+  List<Picture?> itemPictureList = [];
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subTitleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
@@ -23,9 +32,7 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
     super.initState();
     isEditMode = widget.item != null;
     if (isEditMode) {
-      _titleController.text = widget.item!.title;
-      _subTitleController.text = widget.item!.subTitle!;
-      _textController.text = widget.item!.text;
+      _loadItemData();
     }
   }
 
@@ -50,6 +57,29 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
           iconTheme: const IconThemeData(
             color: MyColors.white,
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add_photo_alternate),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PictureListWidget(itemPictureList: itemPictureList),
+                  ),
+                )
+                    .then((value) {
+                  if (value != null &&
+                      !itemPictureList
+                          .any((picture) => picture!.id == value.id)) {
+                    setState(() {
+                      itemPictureList.add(value);
+                    });
+                  }
+                });
+              },
+            ),
+          ],
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -65,6 +95,8 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                     TextField(
                       controller: _titleController,
                       decoration: const InputDecoration(
+                        filled: false,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
                         hintText: '名前やタイトルを入力してください',
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -82,6 +114,8 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                     TextField(
                       controller: _subTitleController,
                       decoration: const InputDecoration(
+                        filled: false,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
                         hintText: '補足情報を入力してください',
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
@@ -96,6 +130,49 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    if (itemPictureList.isNotEmpty)
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: itemPictureList.length,
+                              itemBuilder: (context, index) {
+                                Uint8List imageData =
+                                    base64Decode(itemPictureList[index]!.data);
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => PictureShowWidget(
+                                        picture: itemPictureList[index]!,
+                                        itemPictureList: itemPictureList,
+                                        isRegistered: true,
+                                      ),
+                                    ))
+                                        .then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          itemPictureList = value;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1),
+                                    child: Image.memory(
+                                      imageData,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(8),
@@ -110,6 +187,8 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                           maxLines: null,
                           controller: _textController,
                           decoration: const InputDecoration(
+                            filled: false,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
                             border: InputBorder.none,
                             hintText: '詳細を入力してください',
                           ),
@@ -183,7 +262,7 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
                               child: const Text('削除'),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 16),
                         ],
                       ),
                   ],
@@ -196,6 +275,26 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
     );
   }
 
+  Future<void> _loadItemData() async {
+    _titleController.text = widget.item!.title;
+    _subTitleController.text = widget.item!.subTitle!;
+    _textController.text = widget.item!.text;
+
+    List<ItemPicture> itemPictures =
+        await ItemPicture.getItemPicturesByItemId(widget.item!.id!);
+
+    for (ItemPicture itemPicture in itemPictures) {
+      Picture? picture = await Picture.findById(itemPicture.pictureId);
+      if (picture != null && !itemPictureList.any((p) => p!.id == picture.id)) {
+        setState(() {
+          itemPictureList.add(picture);
+        });
+      }
+    }
+
+    print(itemPictureList);
+  }
+
   void _saveItem() async {
     Item item = Item(
       title: _titleController.text,
@@ -203,7 +302,19 @@ class _ItemFormWidgetState extends State<ItemFormWidget> {
       text: _textController.text,
       dictionaryId: widget.dictionaryId,
     );
-    await Item.saveItem(item);
+
+    int itemId = await Item.saveItem(item);
+
+    if (itemPictureList.isNotEmpty) {
+      for (Picture? picture in itemPictureList) {
+        if (picture != null) {
+          await ItemPicture.saveItemPicture(
+            ItemPicture(itemId: itemId, pictureId: picture.id!),
+          );
+        }
+      }
+    }
+
     final List<Item> items = await Item.getAllItems(widget.dictionaryId);
     setState(() {
       itemList = items;

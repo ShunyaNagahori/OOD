@@ -1,3 +1,4 @@
+import 'package:ood/models/db_helper.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,31 +27,18 @@ class Item {
     };
   }
 
-  static Future<Database> initializeDatabase() async {
-    final Future<Database> database = openDatabase(
-      join(await getDatabasesPath(), 'item_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING NOT NULL, subTitle STRING, text TEXT NOT NULL, dictionaryId INTEGER NOT NULL, FOREIGN KEY (dictionaryId) REFERENCES dictionaries (id))",
-        );
-      },
-      version: 1,
-    );
-
-    return database;
-  }
-
-  static Future<void> saveItem(Item item) async {
-    final Database db = await initializeDatabase();
-    await db.insert(
+  static Future<int> saveItem(Item item) async {
+    final Database db = await DBHelper.initializeDatabase();
+    int itemId = await db.insert(
       'items',
       item.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    return itemId;
   }
 
   static Future<List<Item>> getAllItems(int dictionaryId) async {
-    final Database db = await initializeDatabase();
+    final Database db = await DBHelper.initializeDatabase();
     final List<Map<String, dynamic>> maps = await db.query(
       'items',
       where: 'dictionaryId = ?',
@@ -69,7 +57,7 @@ class Item {
   }
 
   static Future<Item?> findById(int id) async {
-    final Database db = await initializeDatabase();
+    final Database db = await DBHelper.initializeDatabase();
     final List<Map<String, dynamic>> map =
         await db.query('items', where: 'id = ?', whereArgs: [id]);
 
@@ -87,7 +75,7 @@ class Item {
   }
 
   static Future<List<Item>?> findByWord(String word) async {
-    final Database db = await initializeDatabase();
+    final Database db = await DBHelper.initializeDatabase();
     final List<Map<String, dynamic>> maps = await db.query(
       'items',
       where: 'title LIKE ? OR subtitle LIKE ? OR text LIKE ?',
@@ -109,19 +97,21 @@ class Item {
     }
   }
 
-  static Future<void> updateItem(Item item) async {
-    final Database db = await initializeDatabase();
-    await db.update(
+  static Future<int> updateItem(Item item) async {
+    final Database db = await DBHelper.initializeDatabase();
+    int itemId = await db.update(
       'items',
       item.toMap(),
       where: "id = ?",
       whereArgs: [item.id],
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
+
+    return itemId;
   }
 
   static Future<void> deleteItem(int id) async {
-    final Database db = await initializeDatabase();
+    final Database db = await DBHelper.initializeDatabase();
     await db.delete(
       'items',
       where: "id = ?",
@@ -130,7 +120,7 @@ class Item {
   }
 
   static Future<void> deleteAllItems(int dictionaryId) async {
-    final Database db = await initializeDatabase();
+    final Database db = await DBHelper.initializeDatabase();
     await db.delete(
       'items',
       where: 'dictionaryId = ?',

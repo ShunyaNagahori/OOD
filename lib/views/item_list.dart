@@ -171,7 +171,7 @@ class _ItemListWidgetState extends State<ItemListWidget> {
                               ItemShowWidget(item: itemList[index]),
                         ),
                       )
-                          .then((value) {
+                          .then((_) {
                         _refreshItemList(); // FIXME: 更新したときのみリフレッシュしたい
                       });
                     },

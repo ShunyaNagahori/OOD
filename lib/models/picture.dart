@@ -1,47 +1,46 @@
 import 'package:ood/models/db_helper.dart';
-import 'package:ood/models/item.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class Dictionary {
-  Dictionary({this.id, required this.title, this.category});
+class Picture {
+  Picture({this.id, required this.data, this.itemId});
 
   final int? id;
-  final String title;
-  final String? category;
+  final String data;
+  final int? itemId;
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'title': title,
-      'category': category,
+      'data': data,
     };
   }
 
-  static Future<void> saveDictionary(Dictionary dictionary) async {
+  static Future<void> savePicture(Picture picture) async {
     final Database db = await DBHelper.initializeDatabase();
     await db.insert(
-      'dictionaries',
-      dictionary.toMap(),
+      'pictures',
+      picture.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  static Future<List<Dictionary>> getAllDictionaries() async {
+  static Future<List<Picture>> getAllPictures() async {
     final Database db = await DBHelper.initializeDatabase();
-    final List<Map<String, dynamic>> maps = await db.query('dictionaries');
+    final List<Map<String, dynamic>> maps = await db.query('pictures');
     return List.generate(maps.length, (index) {
-      return Dictionary(
+      return Picture(
         id: maps[index]['id'],
-        title: maps[index]['title'],
-        category: maps[index]['category'],
+        data: maps[index]['data'],
+        itemId: maps[index]['itemId'],
       );
     });
   }
 
-  static Future<Dictionary?> findById(int id) async {
+  static Future<Picture?> findById(int id) async {
     final Database db = await DBHelper.initializeDatabase();
     final List<Map<String, dynamic>> map = await db.query(
-      'dictionaries',
+      'pictures',
       where: "id = ?",
       whereArgs: [id],
     );
@@ -49,31 +48,30 @@ class Dictionary {
     if (map.isEmpty) {
       return null;
     } else {
-      return Dictionary(
+      return Picture(
         id: map[0]['id'],
-        title: map[0]['title'],
-        category: map[0]['category'],
+        data: map[0]['data'],
+        itemId: map[0]['itemId'],
       );
     }
   }
 
-  static Future<void> updateDictionary(Dictionary dictionary) async {
+  static Future<void> updatePicture(Picture picture) async {
     final Database db = await DBHelper.initializeDatabase();
     await db.update(
-      'dictionaries',
-      dictionary.toMap(),
+      'pictures',
+      picture.toMap(),
       where: 'id = ?',
-      whereArgs: [dictionary.id],
+      whereArgs: [picture.id],
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
   }
 
-  static Future<void> deleteDictionary(int id) async {
-    Item.deleteAllItems(id);
+  static Future<void> deletePicture(int id) async {
     final Database db = await DBHelper.initializeDatabase();
     await db.delete(
-      'dictionaries',
-      where: 'id = ?',
+      'pictures',
+      where: "id = ?",
       whereArgs: [id],
     );
   }
